@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+h1,p,img,button,header{
+  font-family: 'Source Serif 4', serif;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
