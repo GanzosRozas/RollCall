@@ -17,36 +17,64 @@ import { IterationCw } from "lucide-react";
 import Settings from "@/components/Settings";
 // import {getUser} from "@/services/Information.services.ts"
 import { useState, useEffect } from 'react';
+const user = {
+  id: 1,
+  name: "Javier Rosas",
+  email: "javier.rosas@example.com",
+  roll: "Director"
+}
+const itemsMain = [
+  {
+    title: "Scanner",
+    url: "scanner",
+    icon: IterationCw,
+  },
+  {
+    title: "Matriculación",
+    url: "matriculation",
+    icon: IterationCw,
+  },
 
-const items = [
   {
-    title: "Hours Register",
-    url: "hours-register",
+    title: "Generar QR",
+    url: "QRgenerator",
+    icon: IterationCw,
+  },
+    {
+    title: "Calendario",
+    url: "Calender",
+    icon: IterationCw,
+  },
+  {    title: "Contenido",
+    url: "contents",
+    icon: IterationCw,  },
+...(user.roll ==="Director" ? [{
+    title: "Graficas",
+    url: "graphs",
+    icon: IterationCw,
+  }] : [])
+
+];
+const itemsInitial = [
+  {
+    title: "Unirse a una escuela",
+    url: "unirse-escuela",
     icon: IterationCw,
   },
   {
-    title: "History",
-    url: "history",
+    title: "Crear Escuela",
+    url: "crear-escuela",
     icon: IterationCw,
   },
-  // {
-  //   title: "Complete Record",
-  //   url: "CompleteRecord",
-  //   icon: IterationCw,
-  // },
+
   {
-    title: "Pays Records",
-    url: "pays-records",
+    title: "Mostrar escuela a la que perteneces",
+    url: "escuela-perteneciente",
     icon: IterationCw,
   },
-  // {
-  //   title:'test table',
-  //   url: 'test',
-  //   icon: IterationCw,
-  // }
 ];
 
-function Navigation() {
+function MainNavigation() {
   interface User {
   id: number;
   name: string;
@@ -62,15 +90,15 @@ function Navigation() {
 //     });
 //   }, []); 
   return (
-    <Sidebar collapsible="icon" variant="inset">
-      <SidebarHeader title="Titulo">Menu</SidebarHeader>
+    <Sidebar collapsible="icon" variant="inset" className="bg-primary text-primary-foreground  ">
+      <SidebarHeader className="bg-primary" title="Titulo">Menu</SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-primary">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupLabel className="text-primary-foreground opacity-50">Application</SidebarGroupLabel>
+          <SidebarGroupContent className="">
             <SidebarMenu>
-              {items.map((item) => (
+              {itemsMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -84,7 +112,7 @@ function Navigation() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter title="Footer">
+      <SidebarFooter title="Footer" className="bg-primary">
        {/* <p>Bienvenido, {user ? user.name : 'Cargando...'}</p>
        <p>{user ? user.email : 'Cargando...'}</p> */}
 
@@ -94,5 +122,52 @@ function Navigation() {
     </Sidebar>
   );
 }
+function InitialNavigation() {
+  interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
-export default Navigation;
+// const [user, setUser] = useState<User | null>(null);
+
+//       useEffect(() => {
+//     // Llamada asincrónica a getUser
+//     getUser().then((res) => {
+//       setUser(res); // Guardamos el usuario en el estado
+//     });
+//   }, []); 
+  return (
+    <Sidebar collapsible="icon" variant="inset" className="bg-primary text-primary-foreground ">
+      <SidebarHeader className="bg-primary " title="Titulo">Menu</SidebarHeader>
+
+      <SidebarContent className="bg-primary">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-primary-foreground  opacity-50">Application</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {itemsInitial.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter title="Footer" className="bg-primary">
+       {/* <p>Bienvenido, {user ? user.name : 'Cargando...'}</p>
+       <p>{user ? user.email : 'Cargando...'}</p> */}
+
+        <Settings/>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+export { MainNavigation, InitialNavigation };

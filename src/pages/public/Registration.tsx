@@ -26,7 +26,7 @@ function Access() {
                         ? "left-243 -translate-x-full" 
                         : "left-176 translate-x-0"}`}
         >
-          {isLogin ? "Registrate" : "Inicia sesion →"}
+          {isLogin ? "Registrate" : "Iniciar sesion "}
         </Button>
       {/* Panel que SIEMPRE existe */}
       <div

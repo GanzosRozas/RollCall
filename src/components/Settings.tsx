@@ -135,7 +135,7 @@ export default function Settings() {
           strokeLinecap="round"
           strokeLinejoin="round"
        
-          className="mr-6 cursor-pointer hover:text-primary hover:bg-neutral rounded-4xl transition-colors duration-200"
+          className="mr-6 cursor-pointer hover:text-primary hover:bg-primary-foreground rounded-4xl transition-colors duration-200"
         >
           <path d="M18 20a6 6 0 0 0-12 0" />
           <circle cx="12" cy="10" r="4" />

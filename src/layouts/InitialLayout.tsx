@@ -1,5 +1,5 @@
 import React from "react";
-import {MainNavigation} from "@/components/Navigation";
+import {InitialNavigation} from "@/components/Navigation";
 import SiteHeader from "@/components/SiteHeader";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
@@ -8,10 +8,10 @@ type MainLayoutProps = {
   title: string;
 };
 
-function MainLayout({ children, title }: MainLayoutProps) {
+function InitialLayout({ children, title }: MainLayoutProps) {
   return (
     <SidebarProvider>
-      <MainNavigation />
+      <InitialNavigation />
       <SidebarInset className="flex flex-col ">
         <SiteHeader title={title} />
         {/* Agregamos 'flex flex-col' para que herede la altura perfecta */}
@@ -23,4 +23,4 @@ function MainLayout({ children, title }: MainLayoutProps) {
   );
 }
 
-export default MainLayout;
+export default InitialLayout;
