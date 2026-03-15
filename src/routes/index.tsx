@@ -1,4 +1,6 @@
 import { createBrowserRouter } from "react-router";
+import AuthProtectedRoutes from "./AuthProtectedRoutes.tsx";
+import SchoolLayout from "@/layouts/SchoolLayout.tsx";
 import App from "../App.tsx";
 import HomePage from "@/pages/public/Home.tsx";
 import Access from "@/pages/public/Registration.tsx";
@@ -25,42 +27,54 @@ const router = createBrowserRouter([
         element: <Access />,
       },
       {
-        path: '/crear-escuela',
-        element: <CreateSchool />,
+        element: <AuthProtectedRoutes />,
+        children: [
+          //primera fase
+          {
+            path: "/crear-escuela",
+            element: <CreateSchool />,
+          },
+          {
+            path: "/unirse-escuela",
+            element: <JoinSchool />,
+          },
+          {
+            path: "/escuela-perteneciente",
+            element: <ShowSchoolBelonging />,
+          },
+          //segunda fase aplicacion en si
+          {
+            path: "/escuela/:schoolId",
+            element: <SchoolLayout />,
+            children: [
+              {
+                path: "scanner",
+                element: <Scanner />,
+              },
+              {
+                path: "matriculation",
+                element: <Matriculation />,
+              },
+              {
+                path: "QRgenerator",
+                element: <QrGenerator />,
+              },
+              {
+                path: "calender",
+                element: <Calender />,
+              },
+              {
+                path: "graphs",
+                element: <Graphs />,
+              },
+              {
+                path: "contents",
+                element: <Contents />,
+              },
+            ],
+          },
+        ],
       },
-      {
-        path: '/unirse-escuela',
-        element: <JoinSchool />,
-      },
-      {
-        path: '/escuela-perteneciente',
-        element: <ShowSchoolBelonging />,
-      },
-      {
-        path: "/scanner",
-        element: <Scanner />,
-      },
-      {
-        path: "/matriculation",
-        element: <Matriculation />,
-      },
-      {
-        path: "/QRgenerator",
-        element: <QrGenerator />,
-      },
-      {
-        path:'/calender',
-        element: <Calender />
-      },
-      {
-        path:'/graphs',
-        element: <Graphs />
-      },
-      {
-        path:'/contents',
-        element: <Contents/>
-      }
-
     ],
   },
 ]);

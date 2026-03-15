@@ -13,16 +13,17 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router";
 import { IterationCw } from "lucide-react";
-
+import { useAuth } from "@/context/AuthContext";
 import Settings from "@/components/Settings";
-// import {getUser} from "@/services/Information.services.ts"
-import { useState, useEffect } from 'react';
-const user = {
-  id: 1,
-  name: "Javier Rosas",
-  email: "javier.rosas@example.com",
-  roll: "Director"
-}
+import { getUser } from "@/services/get_info.service.ts";
+import { useState, useEffect, useMemo } from "react";
+// const user = {
+//   id: 1,
+//   name: "Javier Rosas",
+//   email: "javier.rosas@example.com",
+//   roll: "Director"
+// }
+
 const itemsMain = [
   {
     title: "Scanner",
@@ -40,20 +41,17 @@ const itemsMain = [
     url: "QRgenerator",
     icon: IterationCw,
   },
-    {
+  {
     title: "Calendario",
     url: "Calender",
     icon: IterationCw,
   },
-  {    title: "Contenido",
-    url: "contents",
-    icon: IterationCw,  },
-...(user.roll ==="Director" ? [{
-    title: "Graficas",
-    url: "graphs",
-    icon: IterationCw,
-  }] : [])
-
+  { title: "Contenido", url: "contents", icon: IterationCw },
+  // ...(user.roll ==="Director" ? [{
+  //     title: "Graficas",
+  //     url: "graphs",
+  //     icon: IterationCw,
+  //   }] : [])
 ];
 const itemsInitial = [
   {
@@ -76,26 +74,35 @@ const itemsInitial = [
 
 function MainNavigation() {
   interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+    id: number;
+    name: string;
+    email: string;
+  }
 
-// const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-//       useEffect(() => {
-//     // Llamada asincrónica a getUser
-//     getUser().then((res) => {
-//       setUser(res); // Guardamos el usuario en el estado
-//     });
-//   }, []); 
+  useEffect(() => {
+    // Llamada asincrónica a getUser
+ 
+    getUser().then((res) => {
+      setUser(res); // Guardamos el usuario en el estado
+    });
+  }, []);
   return (
-    <Sidebar collapsible="icon" variant="inset" className="bg-primary text-primary-foreground  ">
-      <SidebarHeader className="bg-primary" title="Titulo">Menu</SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      variant="inset"
+      className="bg-primary text-primary-foreground  "
+    >
+      <SidebarHeader className="bg-primary" title="Titulo">
+        Menu
+      </SidebarHeader>
 
       <SidebarContent className="bg-primary">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary-foreground opacity-50">Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-primary-foreground opacity-50">
+            Application
+          </SidebarGroupLabel>
           <SidebarGroupContent className="">
             <SidebarMenu>
               {itemsMain.map((item) => (
@@ -113,37 +120,46 @@ function MainNavigation() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter title="Footer" className="bg-primary">
-       {/* <p>Bienvenido, {user ? user.name : 'Cargando...'}</p>
-       <p>{user ? user.email : 'Cargando...'}</p> */}
+        <p>Bienvenido, {user ? user.name : "Cargando..."}</p>
+        <p>{user ? user.email : "Cargando..."}</p>
 
-        <Settings/>
+        <Settings />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
 }
+
+
+
+
+
+
+
+
+
 function InitialNavigation() {
-  interface User {
-  id: number;
-  name: string;
-  email: string;
-}
 
-// const [user, setUser] = useState<User | null>(null);
 
-//       useEffect(() => {
-//     // Llamada asincrónica a getUser
-//     getUser().then((res) => {
-//       setUser(res); // Guardamos el usuario en el estado
-//     });
-//   }, []); 
+  const {user} = useAuth()
+
+
+
   return (
-    <Sidebar collapsible="icon" variant="inset" className="bg-primary text-primary-foreground ">
-      <SidebarHeader className="bg-primary " title="Titulo">Menu</SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      variant="inset"
+      className="bg-primary text-primary-foreground "
+    >
+      <SidebarHeader className="bg-primary " title="Titulo">
+        Menu
+      </SidebarHeader>
 
       <SidebarContent className="bg-primary">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary-foreground  opacity-50">Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-primary-foreground  opacity-50">
+            Application
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {itemsInitial.map((item) => (
@@ -161,10 +177,10 @@ function InitialNavigation() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter title="Footer" className="bg-primary">
-       {/* <p>Bienvenido, {user ? user.name : 'Cargando...'}</p>
-       <p>{user ? user.email : 'Cargando...'}</p> */}
+        <p>Bienvenido, {user ? `${user.name} ${user.last_name} ${ user.last_name2}` : "Cargando..."}</p>
+        <p>{user ? user.email : "Cargando..."}</p>
 
-        <Settings/>
+        <Settings />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

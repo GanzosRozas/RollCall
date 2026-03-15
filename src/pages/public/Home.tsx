@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from "react-router";
 function HomePage() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col min-h-screen">
       
@@ -29,7 +30,7 @@ function HomePage() {
           </p>
 
           <div className="flex justify-evenly w-full">
-            <Button className="rounded-2xl px-15">Comenzar</Button>
+            <Button onClick={() => navigate("/acceso")} className="rounded-2xl px-15">Comenzar</Button>
             <Button className="rounded-2xl px-15">Aprende más</Button>
           </div>
         </div>
