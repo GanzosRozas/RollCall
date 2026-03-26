@@ -11,7 +11,7 @@ function Access() {
       
       <div
         className="absolute inset-0 
-                      bg-[url('/src/assets/library2.webp')] 
+                      bg-[url('/src/assets/libraryOP.webp')] 
                       bg-cover bg-center bg-no-repeat"
       />
 

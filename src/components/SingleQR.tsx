@@ -1,4 +1,3 @@
-
 import {
   Field,
   FieldContent,
@@ -14,18 +13,50 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import MainLayout from "@/layouts/MainLayout";
+import { QrGenerator } from "@/components/QrGenerator";
+import { useState } from "react";
+import { toast } from "sonner";
+function SingleQR() {
+  const [studentCreated, setStudentCreated] = useState<{
+    name: string;
+    curp: string;
+  } | null>(null);
+  const [formValues, setFormValues] = useState({
+    curp: "",
+  });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(e.target.name, e.target.value);
+    setFormValues({
+      ...formValues,
+      [name]: name === "group" ? value.toUpperCase() : value,
+    });
+  };
 
-function QrGenerator() {
-    return (
-        <MainLayout title="Generador de QR">
-         <div className="flex gap-4 w-full h-full">
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setStudentCreated({
+        name: `${formValues.curp} `,
+        curp: formValues.curp,
+      });
+
+      toast.success("QR Creado");
+    } catch (error) {
+      toast.error("" + error);
+    }
+  };
+
+  return (
+    <div className="flex gap-4 w-full h-full">
       <div className="flex justify-center content-center items-center w-full m-3">
         <FieldSet>
           <FieldLegend>Generar QR del alumno</FieldLegend>
           <FieldDescription>
-            Ingresa toda la informacion necesaria para generar el QR del alumno. Asegurate de que toda la informacion sea correcta antes de
-            enviar el formulario.
+            Ingresa toda la informacion necesaria para generar el QR del alumno.
+            Asegurate de que toda la informacion sea correcta antes de enviar el
+            formulario.
           </FieldDescription>
           <FieldGroup>
             {/* <Field>
@@ -53,9 +84,11 @@ function QrGenerator() {
               />
             </Field> */}
             <Field>
-              <FieldLabel htmlFor="CURP">CURP</FieldLabel>
+              <FieldLabel htmlFor="curp">CURP</FieldLabel>
               <Input
-                id="CURP"
+                id="curp"
+                name="curp"
+                onChange={handleInputChange}
                 autoComplete="off"
                 placeholder="RODJ920101HDFRRL09"
               />
@@ -69,26 +102,26 @@ function QrGenerator() {
               <Input id="grupo" autoComplete="off" placeholder="A" />
             </Field> */}
             <Field orientation={"horizontal"}>
-              <Button>Generar QR</Button>
+              <Button onClick={handleSubmit}>Generar QR</Button>
               <Button variant="outline">Limpiar campos</Button>
             </Field>
           </FieldGroup>
         </FieldSet>
       </div>
       <div className="flex flex-col space-y-4 justify-center content-center items-center w-full">
-        {
-
+        {studentCreated ? (
+          <QrGenerator mode="single" value={formValues} />
+        ) : (
+          // tus skeletons actuales mientras no hay alumno registrado
           <>
-          <p>AGregar Boton de descarga para mandar a imprimir en un formato de 200px x 200px</p>
             <Skeleton className="h-8 bg-primary w-[200px]" />
-            <Skeleton className=" bg-primary w-150 h-150" />
+            <Skeleton className="bg-primary w-150 h-150" />
             <Skeleton className="h-8 bg-primary w-[200px]" />
           </>
-        }
+        )}
       </div>
     </div>
-        </MainLayout>
-    );
+  );
 }
 
-export default QrGenerator;
+export default SingleQR;

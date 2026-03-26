@@ -17,19 +17,19 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {RegistroAlumnos } from "@/components/Matriculacion";
+import {StudentEnroll } from "@/components/MatriculationEnroll";
 import MainLayout from "@/layouts/MainLayout";
 import {useState} from "react";
 function Matriculation() {
 const views: Record<string,React.ReactNode> = {
-  "plus": <RegistroAlumnos />
+  "First_time": <StudentEnroll />
 }
-const [plan, setPlan] = useState("plus");
+const [plan, setPlan] = useState("First_time");
   return (
     <MainLayout title="Matriculación">
       <div>
-        <RadioGroup defaultValue="plus" onValueChange={(value)=>setPlan(value)} className=" flex">
-          <FieldLabel htmlFor="plus-plan">
+        <RadioGroup defaultValue="First_time" onValueChange={(value)=>setPlan(value)} className=" flex">
+          <FieldLabel htmlFor="First_time">
             <Field orientation="horizontal">
               <FieldContent>
                 <FieldTitle>Registro por primera vez</FieldTitle>
@@ -37,16 +37,16 @@ const [plan, setPlan] = useState("plus");
                   Selecciona esta opcion si es que el alumno nunca antes habia sido registrado en el sistema.
                 </FieldDescription>
               </FieldContent>
-              <RadioGroupItem value="plus" id="plus-plan" />
+              <RadioGroupItem value="First_time" id="First_time" />
             </Field>
           </FieldLabel>
-          <FieldLabel htmlFor="pro-plan">
+          <FieldLabel htmlFor="promotion">
             <Field orientation="horizontal">
               <FieldContent>
                 <FieldTitle>Promocion de grado</FieldTitle>
                 <FieldDescription>Selecciona esta opcion</FieldDescription>
               </FieldContent>
-              <RadioGroupItem value="pro" id="pro-plan" />
+              <RadioGroupItem value="promotion" id="promotion" />
             </Field>
           </FieldLabel>
           <FieldLabel htmlFor="enterprise-plan">

@@ -12,11 +12,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router";
-import { IterationCw } from "lucide-react";
+import { icons, IterationCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Settings from "@/components/Settings";
 import { getUser } from "@/services/get_info.service.ts";
 import { useState, useEffect, useMemo } from "react";
+import { useSchool } from "@/context/SchoolContext";
 // const user = {
 //   id: 1,
 //   name: "Javier Rosas",
@@ -24,35 +25,6 @@ import { useState, useEffect, useMemo } from "react";
 //   roll: "Director"
 // }
 
-const itemsMain = [
-  {
-    title: "Scanner",
-    url: "scanner",
-    icon: IterationCw,
-  },
-  {
-    title: "Matriculación",
-    url: "matriculation",
-    icon: IterationCw,
-  },
-
-  {
-    title: "Generar QR",
-    url: "QRgenerator",
-    icon: IterationCw,
-  },
-  {
-    title: "Calendario",
-    url: "Calender",
-    icon: IterationCw,
-  },
-  { title: "Contenido", url: "contents", icon: IterationCw },
-  // ...(user.roll ==="Director" ? [{
-  //     title: "Graficas",
-  //     url: "graphs",
-  //     icon: IterationCw,
-  //   }] : [])
-];
 const itemsInitial = [
   {
     title: "Unirse a una escuela",
@@ -73,29 +45,60 @@ const itemsInitial = [
 ];
 
 function MainNavigation() {
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-  }
+  const { user } = useAuth(); // 👈 del context, sin fetch extra
+  const { activeSchool } = useSchool(); // 👈 para construir las URLs
 
-  const [user, setUser] = useState<User | null>(null);
+  const itemsMain = [
+    {
+      title: "Scanner",
+      url: `/escuela/${activeSchool?.id_school}/scanner`,
+      icon: IterationCw,
+    },
+    {
+      title: "Matriculación",
+      url: `/escuela/${activeSchool?.id_school}/matriculation`,
+      icon: IterationCw,
+    },
+    {
+      title: "Generar QR",
+      url: `/escuela/${activeSchool?.id_school}/QRgenerator`,
+      icon: IterationCw,
+    },
+    {
+      title: "Calendario",
+      url: `/escuela/${activeSchool?.id_school}/calender`,
+      icon: IterationCw,
+    },
+    {
+      title: "Contenido",
+      url: `/escuela/${activeSchool?.id_school}/contents`,
+      icon: IterationCw,
+    },
+    // solo visible para directores
+    ...(activeSchool?.role === "director"
+      ? [
+          {
+            title: "Gráficas",
+            url: `/escuela/${activeSchool?.id_school}/graphs`,
+            icon: IterationCw,
+          },
+          {
+            title:"Configuraciones de la escuela",
+            url:`/escuela/${activeSchool?.id_school}/SchoolSettings`,
+            icon:IterationCw
+          }
+        ]
+      : []),
+  ];
 
-  useEffect(() => {
-    // Llamada asincrónica a getUser
- 
-    getUser().then((res) => {
-      setUser(res); // Guardamos el usuario en el estado
-    });
-  }, []);
   return (
     <Sidebar
       collapsible="icon"
       variant="inset"
-      className="bg-primary text-primary-foreground  "
+      className="bg-primary text-primary-foreground"
     >
-      <SidebarHeader className="bg-primary" title="Titulo">
-        Menu
+      <SidebarHeader className="bg-primary">
+        {activeSchool?.name} {/* 👈 nombre de la escuela activa */}
       </SidebarHeader>
 
       <SidebarContent className="bg-primary">
@@ -103,15 +106,17 @@ function MainNavigation() {
           <SidebarGroupLabel className="text-primary-foreground opacity-50">
             Application
           </SidebarGroupLabel>
-          <SidebarGroupContent className="">
+          <SidebarGroupContent>
             <SidebarMenu>
               {itemsMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
+                      {" "}
+                      {/* 👈 Link en lugar de <a> */}
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -119,10 +124,22 @@ function MainNavigation() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter title="Footer" className="bg-primary">
-        <p>Bienvenido, {user ? user.name : "Cargando..."}</p>
-        <p>{user ? user.email : "Cargando..."}</p>
 
+      <SidebarFooter className="bg-primary">
+        <p>
+          Bienvenido,{" "}
+          {user
+            ? `${user.name} ${user.last_name} ${user.last_name2}`
+            : "Cargando..."}
+        </p>
+        <p>{user?.email}</p>
+        {/* 👈 botón para cambiar de escuela */}
+        <Link
+          to="/escuela-perteneciente"
+          className="text-sm opacity-70 hover:opacity-100"
+        >
+          Cambiar escuela
+        </Link>
         <Settings />
       </SidebarFooter>
       <SidebarRail />
@@ -130,20 +147,8 @@ function MainNavigation() {
   );
 }
 
-
-
-
-
-
-
-
-
 function InitialNavigation() {
-
-
-  const {user} = useAuth()
-
-
+  const { user } = useAuth();
 
   return (
     <Sidebar
@@ -177,7 +182,12 @@ function InitialNavigation() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter title="Footer" className="bg-primary">
-        <p>Bienvenido, {user ? `${user.name} ${user.last_name} ${ user.last_name2}` : "Cargando..."}</p>
+        <p>
+          Bienvenido,{" "}
+          {user
+            ? `${user.name} ${user.last_name} ${user.last_name2}`
+            : "Cargando..."}
+        </p>
         <p>{user ? user.email : "Cargando..."}</p>
 
         <Settings />

@@ -12,13 +12,14 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
 
 export default function Settings() {
-//   const { session } = useSession();
+  //   const { session } = useSession();
 
-  const  session  = 'true';
+  const session = "true";
   const [section, setSection] = useState("accesibilidad");
   // ✅ RESTAURADO: Se añade "atajos" al tipo de estado
-  const [subSection, setSubSection] = useState<"pantalla" | "sonido" | "dislexia" | "parkinson" | "atajos">("pantalla");
-
+  const [subSection, setSubSection] = useState<
+    "pantalla" | "sonido" | "dislexia" | "parkinson" | "atajos"
+  >("pantalla");
 
   const [AccActive, setAccActive] = useState(true);
   const [PerfilActive, setPerfilActive] = useState(false);
@@ -26,18 +27,20 @@ export default function Settings() {
 
   const [darkMode, setDarkMode] = useState(false);
 
-
-
   let navigate = useNavigate();
 
-  
   useEffect(() => {
     const savedDark = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDark);
     document.documentElement.classList.toggle("dark", savedDark);
-
-  })
-
+  });
+  const logout=()=>{
+   cookieStore.delete({
+  name: "token",
+  path: "/",
+});
+// navigate("/")
+  }
   const handleSection = (Select: string) => {
     setSection(Select);
     setAccActive(Select === "accesibilidad");
@@ -50,12 +53,6 @@ export default function Settings() {
     document.documentElement.classList.toggle("dark", checked);
   };
 
-  
-
-  
-
-  
-
   const renderAccesibilidadSubcontent = () => {
     switch (subSection) {
       case "pantalla":
@@ -67,7 +64,9 @@ export default function Settings() {
                 onCheckedChange={handleDarkModeChange}
                 id="darkmode"
               />
-              <Label className="text-text" htmlFor="darkmode">Modo oscuro</Label>
+              <Label className="text-text" htmlFor="darkmode">
+                Modo oscuro
+              </Label>
             </div>
           </div>
         );
@@ -81,27 +80,21 @@ export default function Settings() {
           <>
             <DialogHeader className="text-text">
               <DialogTitle>Accesibilidad</DialogTitle>
-              <DialogDescription>Ajustes visuales, auditivos, lectura y atajos.</DialogDescription>
+              <DialogDescription>
+                Ajustes visuales, auditivos, lectura y atajos.
+              </DialogDescription>
             </DialogHeader>
             <div className="flex gap-2 border-b pb-2 mt-4 flex-wrap">
-
               <button
                 onClick={() => setSubSection("pantalla")}
                 className={`px-4 py-2 rounded whitespace-nowrap  ${
                   subSection === "pantalla"
-                    ?  "bg-primary text-card font-semibold shadow-md" : "hover:bg-primary hover:text-neutral text-card-foreground"
+                    ? "bg-primary text-card font-semibold shadow-md"
+                    : "hover:bg-primary hover:text-neutral text-card-foreground"
                 }`}
               >
                 Pantalla
               </button>
-
-
-
-
-
-
-   
-             
             </div>
             <div className="pb-10">{renderAccesibilidadSubcontent()}</div>
           </>
@@ -114,7 +107,12 @@ export default function Settings() {
               <DialogDescription>Opciones de cuenta.</DialogDescription>
             </DialogHeader>
             <div className="mt-4">
-              <button className="cursor-pointer hover:border-2  bg-primary text-primary-foreground rounded-2xl w-50 h-10 m-5" onClick={() => (navigate("/"))}>Cerrar sesión</button>
+              <button
+                className="cursor-pointer hover:border-2  bg-primary text-primary-foreground rounded-2xl w-50 h-10 m-5"
+                onClick={logout}
+              >
+                Cerrar sesión
+              </button>
             </div>
           </>
         );
@@ -134,7 +132,6 @@ export default function Settings() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-       
           className="mr-6 cursor-pointer hover:text-primary hover:bg-primary-foreground rounded-4xl transition-colors duration-200"
         >
           <path d="M18 20a6 6 0 0 0-12 0" />
@@ -146,27 +143,28 @@ export default function Settings() {
       <DialogContent className="max-w-2xl p-0 overflow-hidden">
         <div className="flex h-full">
           <aside className="w-40 bg-card-foreground border-r p-4 flex flex-col space-y-3">
-
             <button
               onClick={() => handleSection("accesibilidad")}
               className={`block px-4 py-2 rounded  transition-colors duration-200 ${
-                AccActive ? "bg-primary text-card font-semibold shadow-md" : "hover:bg-primary hover:text-neutral text-primary-foreground"
+                AccActive
+                  ? "bg-primary text-card font-semibold shadow-md"
+                  : "hover:bg-primary hover:text-neutral text-primary-foreground"
               }`}
             >
               Accesibilidad
             </button>
-            {session?(
-
+            {session ? (
               <button
-              onClick={() => handleSection("perfil")}
-              className={`block px-4 py-2 rounded transition-colors duration-200 ${
-                PerfilActive ?  "bg-primary text-card font-semibold shadow-md" : "hover:bg-primary hover:text-neutral text-primary-foreground"
+                onClick={() => handleSection("perfil")}
+                className={`block px-4 py-2 rounded transition-colors duration-200 ${
+                  PerfilActive
+                    ? "bg-primary text-card font-semibold shadow-md"
+                    : "hover:bg-primary hover:text-neutral text-primary-foreground"
                 }`}
-                >
-              Perfil
-            </button>
-            ):null}
-
+              >
+                Perfil
+              </button>
+            ) : null}
           </aside>
           <main className="flex-1 p-6 overflow-y-auto max-h-[80vh]">
             {renderContent()}

@@ -6,7 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { useSchool } from "@/context/SchoolContext"; // 👈 agregado
+import { useNavigate } from "react-router"; // 👈 agregado
 import { toast } from "sonner";
+import { DatePickerField } from "@/components/DataPickerFiled";
+
 import { CreateSchoolService } from "@/services/post_info.service";
 // import { getUser } from "@/services/get_info.service";
 import {
@@ -20,8 +24,11 @@ import {
 
 function CreateSchool() {
   const { user, loading } = useAuth();
+  const { selectSchool } = useSchool(); // 👈 agregado
+  const navigate = useNavigate(); // 👈 agregado
   const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const [date, setDate] = useState<Date>();
   const nextStep = () => {
     const currentInputs = document.querySelectorAll(
       "#school input",
@@ -43,9 +50,16 @@ function CreateSchool() {
   const [formValues, setFormValues] = useState({
     id_teacher: 0,
     name_school: "",
-
     education_level: "",
     group: "",
+    ICycle: "",
+    FCycle: "",
+    IPeriod1: "",
+    IPeriod2: "",
+    IPeriod3: "",
+    FPeriod1: "",
+    FPeriod2: "",
+    FPeriod3: "",
   });
 
   useEffect(() => {
@@ -59,12 +73,28 @@ function CreateSchool() {
     funsion();
   }, [user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    console.log(e.target.name, e.target.value);
+  const handleDateChange = (field: string, selectedDate: Date | undefined) => {
+    if (!selectedDate) return;
+
+    // ✅ Extrae año/mes/día en hora LOCAL, no UTC
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDate.getDate()).padStart(2, "0");
+
     setFormValues({
       ...formValues,
-      [name]: name === "group" ? value.toUpperCase().replace(/\s/g, "") : value,
+      [field]: `${year}-${month}-${day}`,
+    });
+  };
+  // ✅ Agrega T00:00:00 para forzar hora local
+  const parseLocalDate = (dateStr: string) => new Date(dateStr + "T00:00:00");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    console.log(e.target.name, e.target.value, e.target.id);
+    setFormValues({
+      ...formValues,
+      [id]: id === "group" ? value.toUpperCase().replace(/\s/g, "") : value,
     });
   };
 
@@ -72,9 +102,19 @@ function CreateSchool() {
     e.preventDefault();
 
     try {
-      // await signin(formValues); // 👈 usa el context
-      await CreateSchoolService(formValues);
-      toast.success("Escuela creada con exito");
+      console.log(formValues);
+      const res = await CreateSchoolService(formValues); // 👈 captura la respuesta
+
+      console.log(res);
+      // 👈 guarda la escuela en el context y navega
+      selectSchool({
+        id_school: res.school_id,
+        name: formValues.name_school,
+        role: "director",
+      });
+
+      toast.success("Escuela creada con éxito");
+      navigate(`/escuela/${res.school_id}/scanner`);
     } catch (error) {
       toast.error("" + error);
     }
@@ -130,20 +170,11 @@ function CreateSchool() {
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -300, opacity: 0 }}
                       transition={{ duration: 0.4 }}
-                      className="space-y-4"
+                      className="space-y-4 overflow-y-auto max-h-[60vh] pr-2"
                     >
-                      <Label htmlFor="grade">Cantidad de Grados</Label>
-                      {/* <Input
-                      required
-                      type="number"
-                      id="grade"
-                      name="grade"
-                      onChange={handleInputChange}
-                      value={formValues.grade}
-                      max={6}
-                      min={1}
-                      placeholder="6"
-                    /> */}
+                      <Label htmlFor="grade">
+                        Seleccione el nivel educativo de la escuela
+                      </Label>
                       <Select
                         value={formValues.education_level}
                         onValueChange={(value) =>
@@ -169,7 +200,35 @@ function CreateSchool() {
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+                      {formValues.education_level == "Primaria" ? (
+                        <div>
+                          <h1>Ciclo escolar</h1>
+<div className="flex">
+  <DatePickerField label="Inicio del ciclo escolar" value={formValues.ICycle} onChange={(date) => handleDateChange("ICycle", date)} />
+  <DatePickerField label="Final del ciclo escolar"  value={formValues.FCycle} onChange={(date) => handleDateChange("FCycle", date)} />
+</div>
 
+<h1>Periodo numero 1</h1>
+<div className="flex">
+  <DatePickerField label="Inicio del trimestre" value={formValues.IPeriod1} onChange={(date) => handleDateChange("IPeriod1", date)} />
+  <DatePickerField label="Final del trimestre"  value={formValues.FPeriod1} onChange={(date) => handleDateChange("FPeriod1", date)} />
+</div>
+
+<h1>Periodo numero 2</h1>
+<div className="flex">
+  <DatePickerField label="Inicio del trimestre" value={formValues.IPeriod2} onChange={(date) => handleDateChange("IPeriod2", date)} />
+  <DatePickerField label="Final del trimestre"  value={formValues.FPeriod2} onChange={(date) => handleDateChange("FPeriod2", date)} />
+</div>
+
+<h1>Periodo numero 3</h1>
+<div className="flex">
+  <DatePickerField label="Inicio del trimestre" value={formValues.IPeriod3} onChange={(date) => handleDateChange("IPeriod3", date)} />
+  <DatePickerField label="Final del trimestre"  value={formValues.FPeriod3} onChange={(date) => handleDateChange("FPeriod3", date)} />
+</div>
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
                       <Label htmlFor="group">
                         Cantidad de Grupos por Grado
                       </Label>

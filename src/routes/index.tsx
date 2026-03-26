@@ -9,10 +9,11 @@ import Matriculation from "@/pages/private/Matriculation.tsx";
 import CreateSchool from "@/pages/private/FirstSteps/CreateSchool.tsx";
 import JoinSchool from "@/pages/private/FirstSteps/JoinSchool.tsx";
 import ShowSchoolBelonging from "@/pages/private/FirstSteps/ShowSchoolBelonging.tsx";
-import QrGenerator from "@/pages/private/QrGenerator.tsx";
+import GetQr from "@/pages/private/GetQr.tsx";
 import Calender from "@/pages/private/Calender.tsx";
 import Graphs from "@/pages/private/Graphs.tsx";
 import Contents from "@/pages/private/Contents.tsx";
+import SchoolSettings from "@/pages/private/ShcoolSettings.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "QRgenerator",
-                element: <QrGenerator />,
+                element: <GetQr />,
               },
               {
                 path: "calender",
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
               {
                 path: "contents",
                 element: <Contents />,
+              },
+              {
+                path: "SchoolSettings",
+                element: <SchoolSettings/>
               },
             ],
           },
